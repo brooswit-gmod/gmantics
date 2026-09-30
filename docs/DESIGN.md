@@ -3,7 +3,7 @@
 gmantics is a SimAntics-like smart-object system: entities advertise actions
 and their effects on needs, while NPCs choose nearby opportunities to meet
 their needs. GMOD-1 defines the staged work; GMOD-2 supplies this scaffold
-only. The behavior below is planned, not implemented.
+only. The core is implemented; brain and entities below remain planned.
 
 ## Layers
 
@@ -25,7 +25,7 @@ and 0 is empty. Clamp all updates to 0..100. Given elapsed seconds `dt`,
 decay is `value = max(0, value - decay_per_second * dt)`; applying effects
 adds satisfaction and clamps at 100. Pass elapsed time explicitly rather
 than reading an engine clock in core. A proposed normalized urgency is
-`urgency(need) = (100 - value) / 100`.
+`urgency(need) = ((max - value) / (max - min))^2`.
 
 ## Advertisements and choice
 
@@ -93,9 +93,8 @@ and examples; they are not prerequisites for running the core suite.
 4. **Task 4:** example entities and NPC, plus entity-authoring documentation.
 5. **Task 5:** test runner integration and GitHub Actions using LuaJIT.
 
-The runner may be plain Lua or Busted. No executable test command exists
-in the scaffold; later tasks must document the chosen invocation in README
-and both contributor files rather than imply a nonexistent suite passes.
+Run the dependency-free core suite with `luajit test/run.lua` from the
+repository root. See [CORE.md](CORE.md) for the implemented API.
 
 Addon metadata follows the allowed types, tags and ignore-list format in
 the [Facepunch Workshop guide](https://wiki.facepunch.com/gmod/Workshop_Addon_Creation).

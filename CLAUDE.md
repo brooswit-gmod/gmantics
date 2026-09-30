@@ -10,9 +10,8 @@
   Autorun is responsible for loading, not gameplay logic.
 - Keep changes small and single-purpose. This scaffold introduces no
   gameplay logic; follow the staged plan in `docs/DESIGN.md`.
-- Tests belong in `test/`. No runner exists yet. Core tests arrive in
-  GMOD-3; the final task wires a plain-Lua or Busted runner and LuaJIT CI.
-  Once implemented, document the exact command in README and here.
+- Tests belong in `test/`. Run `luajit test/run.lua` from the repo root.
+  The core suite uses plain-Lua assertions and needs no test dependencies.
   Test core behavior outside GMod and use fake adapters for brain tests.
 - Open PRs into `main`; never push directly to `main`.
 - Commit with a GitHub noreply author address, never a personal email.
