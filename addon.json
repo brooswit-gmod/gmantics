@@ -1,0 +1,6 @@
+{
+  "title": "gmantics",
+  "type": "entity",
+  "tags": ["fun", "roleplay"],
+  "ignore": [".git*", "*.md", "docs/*", "test/*", "*.log", "*.gma", "*.psd"]
+}
