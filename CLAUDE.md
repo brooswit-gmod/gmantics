@@ -11,7 +11,11 @@
 - Keep changes small and single-purpose. Implement gameplay within the
   ticket scope; follow the staged plan in `docs/DESIGN.md`.
 - Tests belong in `test/`. Run `luajit test/run.lua` from the repo root.
-  The core and brain suites use plain-Lua assertions with no dependencies.
+  Install LuaJIT and Git. The runner discovers all unignored `.lua` files
+  recursively under `test/` and isolates suites in fresh processes; keep
+  helpers outside that directory. Suites use plain-Lua assertions.
+  CI also parses every Lua file and runs `bash test/check-core.sh`; maintain
+  the prohibited engine-global list in `test/gmod-globals.txt`.
   The brain uses an injected adapter; all engine calls belong in
   `lua/gmantics/brain/adapter.lua`. See `docs/BRAIN.md` for configuration
   defaults, adapter contract, and the thin `gmantics_npc` integration.

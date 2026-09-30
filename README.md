@@ -18,20 +18,36 @@ with a minimal `gmantics_npc` NextBot and an injectable engine adapter.
 | `docs/DESIGN.md` | Architecture, behavior and delivery plan |
 | `AGENTS.md`, `CLAUDE.md` | Identical contributor conventions |
 
-## Development and tests
+## Testing and CI
 
-Use Lua 5.1/LuaJIT-compatible syntax. Run the dependency-free assert suite
-from the repository root:
+Use Lua 5.1/LuaJIT-compatible syntax. Install LuaJIT and Git, then run the
+dependency-free assert suites from the repository root:
 
 ```sh
 luajit test/run.lua
 ```
 
+The runner discovers every tracked or unignored new `.lua` file recursively
+under `test/`, except itself. Each file runs in a fresh LuaJIT process with
+the addon module path configured, so need registries do not leak between
+suites. Keep helper modules outside `test/`. It runs all suites and exits
+non-zero if any fail; discovery errors and an empty test directory also fail.
+
+GitHub Actions runs on pushes to `main` and on pull requests, with read-only
+repository permissions. It installs LuaJIT, syntax-checks every `.lua` file
+(including engine-facing code), runs `bash test/check-core.sh`, and runs the
+same test command above. No busted dependency is needed.
+
+The portable-core guard keeps its prohibited GMod names in one place:
+[`test/gmod-globals.txt`](test/gmod-globals.txt). Add newly encountered engine
+globals there. The grep checks whole identifiers conservatively, including
+comments and strings, so describe engine dependencies outside core files.
+This list is a guardrail, not a complete inventory of every GMod API.
+
 See [the brain API](docs/BRAIN.md) for its state machine, adapter and config,
 [the core API](docs/CORE.md) for module loading, defaults and tie rules,
 [the design](docs/DESIGN.md) for later stages and
-[contributor conventions](AGENTS.md) for PR rules. LuaJIT CI arrives in the
-final task.
+[contributor conventions](AGENTS.md) for PR rules.
 
 For an optional local game smoke check, place the repository as an addon
 folder under `garrysmod/addons/gmantics/` and start the game. The stub prints
@@ -57,6 +73,6 @@ Default need definitions live in `lua/gmantics/needs_default.lua`.
 See [Adding an entity](docs/ADDING_AN_ENTITY.md) for a minimal skeleton,
 advertisement contract, new needs and a worked water-bottle example.
 
-The main suite also validates every example advertisement with fake entity
-tables. Run `luajit test/defaults.lua` separately to verify default need
-rates in a fresh registry. No in-game behavior has been exercised here.
+The test command also validates every example advertisement with fake entity
+tables and verifies default need rates in a fresh registry. No in-game
+behavior has been exercised here.

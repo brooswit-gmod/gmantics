@@ -1,0 +1,25 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install LuaJIT
+        run: sudo apt-get update && sudo apt-get install -y luajit
+      - name: Check every Lua file parses
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            luajit -bl "$file" > /dev/null
+          done < <(find . -type f -name '*.lua' -not -path './.git/*' -print0)
+      - name: Guard portable core
+        run: bash test/check-core.sh
+      - name: Run all test suites
+        run: luajit test/run.lua

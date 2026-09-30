@@ -98,4 +98,27 @@ test("unowned advertised needs ignored on apply and invalid config rejected", fu
     assert(b.needs:get("brain_food") == 10)
     assert(not pcall(function() setup({}, {}, { move_timeout = -1 }) end))
 end)
+test("scan ignores the agent itself and removed objects", function()
+    local removed, valid = entity(1, 0, "brain_food"), entity(2, 0, "brain_food")
+    removed.removed = true
+    local b, a, step = setup({ removed, valid }, { brain_food = 0 })
+    b.agent = entity(0, 0, "brain_food")
+    a.entities[#a.entities + 1] = b.agent
+    step(); step()
+    assert(b.choice.entity == valid)
+end)
+
+test("target removed before APPLY prevents effects and allows rescan", function()
+    local target = entity(1, 0, "brain_food")
+    local b, a, step = setup({ target }, { brain_food = 20 }, { rescan_interval = 2 })
+    step(); step(); step(); step(3)
+    assert(b.state == "APPLY" and a.begins == 1 and a.ends == 1)
+    target.removed = true
+    step()
+    assert(b.state == "IDLE" and not b.choice and b.needs:get("brain_food") == 17)
+    step(1); assert(b.state == "IDLE")
+    a.entities = { entity(2, 0, "brain_food") }
+    step(1); step()
+    assert(b.state == "MOVE" and b.choice.entity.id == 2)
+end)
 print("All " .. count .. " brain tests passed")
