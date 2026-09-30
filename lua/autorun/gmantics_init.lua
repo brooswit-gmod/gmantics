@@ -13,7 +13,6 @@ if SERVER then
     load("core/select")
     gmantics = { Needs = needs, NeedState = state,
         Brain = load("brain/brain"), Adapter = load("brain/adapter") }
-    if not needs.all().hunger then needs.define("hunger", { decay_per_sec = 1 }) end
-    if not needs.all().energy then needs.define("energy", { decay_per_sec = 0.5 }) end
+    load("needs_default")
 end
 print("[gmantics] loaded")
