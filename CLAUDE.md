@@ -8,10 +8,13 @@
 - Keep GMod-facing code thin and isolated behind adapters in
   `lua/gmantics/brain/` and entity integration in `lua/entities/`.
   Autorun is responsible for loading, not gameplay logic.
-- Keep changes small and single-purpose. This scaffold introduces no
-  gameplay logic; follow the staged plan in `docs/DESIGN.md`.
+- Keep changes small and single-purpose. Implement gameplay within the
+  ticket scope; follow the staged plan in `docs/DESIGN.md`.
 - Tests belong in `test/`. Run `luajit test/run.lua` from the repo root.
-  The core suite uses plain-Lua assertions and needs no test dependencies.
+  The core and brain suites use plain-Lua assertions with no dependencies.
+  The brain uses an injected adapter; all engine calls belong in
+  `lua/gmantics/brain/adapter.lua`. See `docs/BRAIN.md` for configuration
+  defaults, adapter contract, and the thin `gmantics_npc` integration.
   Test core behavior outside GMod and use fake adapters for brain tests.
 - Open PRs into `main`; never push directly to `main`.
 - Commit with a GitHub noreply author address, never a personal email.
