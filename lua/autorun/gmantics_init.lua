@@ -1,8 +1,16 @@
 if SERVER then
-    -- include returns the same module tables that plain Lua loads with require.
+    -- GMod's require does not consult Lua's package.loaded. Give only these
+    -- modules a private require environment; leave the engine's global alone.
+    local modules = {}
+    local environment = setmetatable({ require = function(name)
+        assert(modules[name], "gmantics dependency not loaded: " .. name)
+        return modules[name]
+    end }, { __index = _G })
     local function load(name)
-        local module = include("gmantics/" .. name .. ".lua")
-        package.loaded["gmantics." .. name:gsub("/", ".")] = module
+        local chunk = assert(CompileFile("gmantics/" .. name .. ".lua"))
+        setfenv(chunk, environment)
+        local module = chunk()
+        modules["gmantics." .. name:gsub("/", ".")] = module
         return module
     end
     load("core/check")
